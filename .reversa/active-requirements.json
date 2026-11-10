@@ -1,0 +1,10 @@
+{
+  "schema-version": 1,
+  "feature-dir": "_reversa_forward/001-transcricao-whatsapp",
+  "feature-id": "001",
+  "short-name": "transcricao-whatsapp",
+  "started-at": "2026-11-10T00:00:00-03:00",
+  "current-stage": "done",
+  "stages-completed": ["requirements", "plan", "coding"],
+  "paused-features": []
+}

@@ -1,0 +1,15 @@
+export const messages = {
+  unauthorized: "Sessão expirada. Entre novamente.",
+  badPayload: "Requisição inválida.",
+  fileTooLarge: "Arquivo acima de 10 MB.",
+  unsupportedFormat: "Formato não suportado. Use .ogg, .opus, .mp3 ou .m4a.",
+  durationTooLong: "Áudio acima de 5 minutos. Envie um áudio menor.",
+  unreadableAudio: "Não foi possível ler o áudio.",
+  transcriptionFailed: "Falha ao transcrever. Tente novamente em instantes.",
+  duplicate: "Este áudio já está sendo processado.",
+  notFound: "Transcrição não encontrada.",
+  serverError: "Erro inesperado. Tente novamente.",
+  emptyHistory: "Nenhum áudio transcrito ainda.",
+  emptySearch: "Nenhum resultado. Tente um termo mais curto.",
+  summaryFallback: "Resumo mínimo gerado: o provedor de IA não respondeu no formato esperado.",
+} as const;

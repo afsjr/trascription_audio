@@ -1,0 +1,10 @@
+# Reversa
+.reversa/config.user.toml
+_reversa_sdd/
+.neon
+node_modules/
+.env.local
+.agents/
+.claude/
+.DS_Store
+*.log
