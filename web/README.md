@@ -7,7 +7,7 @@ exportados do WhatsApp. O áudio é apagado após a transcrição.
 
 - Next.js 15 (App Router) + TypeScript + Tailwind
 - Vercel Hobby (funções de até 300 s)
-- Vercel Blob (upload direto do cliente)
+- Vercel Blob privado (upload server-side via OIDC)
 - Groq `whisper-large-v3-turbo` com fallback OpenAI para transcrição
 - OpenAI `gpt-4o-mini` com fallback Groq para o resumo
 - Neon Postgres com `pg` + `attachDatabasePool` (`@vercel/functions`) e busca full-text em português
@@ -23,13 +23,16 @@ npm install
 npm run dev
 ```
 
+Para o Blob privado, o servidor usa OIDC. Rode `vercel link` e `vercel env pull /tmp/dev.env --environment development`, depois copie `BLOB_STORE_ID` e `VERCEL_OIDC_TOKEN` para `web/.env.local`. O token OIDC expira e precisa ser renovado.
+
 Execute `db/migrations/001_init.sql` no banco Neon antes do primeiro uso, usando a conexão direta (`DATABASE_URL_UNPOOLED`) — não a pooled.
 
 ## Variáveis de ambiente
 
 | Variável | Uso |
 |---|---|
-| `BLOB_READ_WRITE_TOKEN` | Upload e remoção no Vercel Blob |
+| `BLOB_STORE_ID` | ID do Blob store privado (OIDC) |
+| `VERCEL_OIDC_TOKEN` | Credencial OIDC para o Blob; local via `vercel env pull` |
 | `GROQ_API_KEY` | Transcrição principal |
 | `OPENAI_API_KEY` | Fallback de transcrição e resumo |
 | `DATABASE_URL` | Conexão com o Neon Postgres |
@@ -39,7 +42,7 @@ Execute `db/migrations/001_init.sql` no banco Neon antes do primeiro uso, usando
 ## Deploy no Vercel
 
 1. Crie o projeto apontando para o repositório com **Root Directory** `web`.
-2. Adicione um Blob store e um banco Neon pelo marketplace.
+2. Conecte um Blob store privado ao projeto com credenciais OIDC e um banco Neon pelo marketplace.
 3. Configure as variáveis de ambiente em Production.
 4. Rode a migração no banco de produção.
 5. Faça o deploy e teste com um áudio real.
@@ -56,5 +59,5 @@ npm run test   # Vitest
 ## Limites
 
 - Áudio de até 5 minutos (300 s); acima disso a requisição é rejeitada.
-- Arquivo de até 10 MB.
+- Arquivo de até 4 MB.
 - Formatos: `.ogg`, `.opus`, `.mp3`, `.m4a`.

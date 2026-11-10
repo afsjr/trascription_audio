@@ -1,7 +1,7 @@
 import { parseBuffer } from "music-metadata";
 
 export const MAX_DURATION_SECONDS = 300;
-export const MAX_FILE_BYTES = 10 * 1024 * 1024;
+export const MAX_FILE_BYTES = 4 * 1024 * 1024;
 
 export const ALLOWED_MIME_TYPES = [
   "audio/ogg",

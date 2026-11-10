@@ -7,7 +7,7 @@
 
 ## 1. Resumo da abordagem
 
-🟡 Construir uma aplicação Next.js (App Router) implantada no Vercel Hobby, com o código em `web/`. O navegador envia o áudio direto ao Vercel Blob (evitando o payload de 4,5 MB); a função `/api/transcribe` valida a duração com `music-metadata`, chama o Groq (`whisper-large-v3-turbo`) com fallback para a OpenAI, gera o resumo estruturado por LLM validado com Zod, persiste no Neon Postgres e apaga o Blob. O histórico usa full-text nativo do Postgres com `tsvector` em português, e o acesso é protegido por senha única com cookie HMAC httpOnly.
+🟡 Construir uma aplicação Next.js (App Router) implantada no Vercel Hobby, com o código em `web/`. O navegador envia o áudio para `/api/upload`; a rota valida a duração com `music-metadata`, grava em um Blob privado via OIDC, chama o Groq (`whisper-large-v3-turbo`) com fallback para a OpenAI, gera o resumo estruturado por LLM validado com Zod, persiste no Neon Postgres e apaga o Blob. O histórico usa full-text nativo do Postgres com `tsvector` em português, e o acesso é protegido por senha única com cookie HMAC httpOnly.
 
 ## 2. Princípios aplicados
 
@@ -20,7 +20,7 @@
 | ID | Decisão | Justificativa | Alternativas descartadas | Confidência |
 |----|---------|----------------|--------------------------|-------------|
 | D-01 | 🟡 Next.js 15 App Router + TypeScript em `web/` | 🟡 Deploy simples no Vercel e um só runtime | 🟡 Vite SPA + funções separadas | 🟡 |
-| D-02 | 🟡 Upload direto ao Vercel Blob no cliente | 🟡 Contorna o limite de 4,5 MB do request | 🟡 Enviar o binário pelo route handler | 🟡 |
+| D-02 | 🟡 Upload server-side para Blob privado via OIDC (limite de 4 MB) | 🟡 Mantém o áudio privado e usa OIDC; 4 MB cobre áudios de voz do WhatsApp | 🟡 Upload direto do cliente com token estático | 🟡 |
 | D-03 | 🟡 Groq `whisper-large-v3-turbo` como transcrição padrão | 🟡 Latência e custo menores para 5 min | 🟡 OpenAI `whisper-1` como padrão | 🟡 |
 | D-04 | 🟡 OpenAI `gpt-4o-mini` como resumidor padrão, Groq `llama-3.3-70b-versatile` como fallback | 🟡 Resumo detalhado com JSON confiável e custo baixo | 🟡 Só Groq, só OpenAI | 🟡 |
 | D-05 | 🟡 Neon Postgres com `pg` + `attachDatabasePool` de `@vercel/functions` | 🟡 Recomendação do skill Neon para Vercel com Fluid compute; pool reutilizado por instância | 🟡 `@neondatabase/serverless`, Supabase, Vercel KV | 🟡 |

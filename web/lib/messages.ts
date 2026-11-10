@@ -1,7 +1,7 @@
 export const messages = {
   unauthorized: "Sessão expirada. Entre novamente.",
   badPayload: "Requisição inválida.",
-  fileTooLarge: "Arquivo acima de 10 MB.",
+  fileTooLarge: "Arquivo acima de 4 MB.",
   unsupportedFormat: "Formato não suportado. Use .ogg, .opus, .mp3 ou .m4a.",
   durationTooLong: "Áudio acima de 5 minutos. Envie um áudio menor.",
   unreadableAudio: "Não foi possível ler o áudio.",

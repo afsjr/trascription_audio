@@ -1,10 +1,9 @@
 "use client";
 
-import { upload } from "@vercel/blob/client";
 import { useRouter } from "next/navigation";
 import { useRef, useState } from "react";
 
-const MAX_BYTES = 10 * 1024 * 1024;
+const MAX_BYTES = 4 * 1024 * 1024;
 const MAX_SECONDS = 300;
 const ALLOWED_EXTENSIONS = [".ogg", ".opus", ".mp3", ".m4a"];
 
@@ -66,7 +65,7 @@ export function UploadForm() {
           collected.push({
             filename: file.name,
             status: "erro",
-            message: "Arquivo acima de 10 MB.",
+            message: "Arquivo acima de 4 MB.",
           });
           continue;
         }
@@ -81,21 +80,15 @@ export function UploadForm() {
           continue;
         }
 
-        const blob = await upload(file.name, file, {
-          access: "public",
-          handleUploadUrl: "/api/blob-upload",
-        });
+        const formData = new FormData();
+        formData.append("file", file);
+        if (duration !== null) {
+          formData.append("clientDurationSeconds", String(duration));
+        }
 
-        const response = await fetch("/api/transcribe", {
+        const response = await fetch("/api/upload", {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            blobUrl: blob.url,
-            filename: file.name,
-            mimeType: file.type || "audio/ogg",
-            sizeBytes: file.size,
-            clientDurationSeconds: duration,
-          }),
+          body: formData,
         });
 
         const payload = (await response.json().catch(() => ({}))) as {
@@ -139,7 +132,7 @@ export function UploadForm() {
     <div className="card">
       <h2 className="text-lg font-semibold">Enviar áudio</h2>
       <p className="mt-1 text-sm text-slate-600">
-        Arquivos .ogg, .opus, .mp3 ou .m4a, até 5 minutos e 10 MB. O áudio é
+        Arquivos .ogg, .opus, .mp3 ou .m4a, até 5 minutos e 4 MB. O áudio é
         apagado após a transcrição.
       </p>
 

@@ -15,13 +15,15 @@
 Crie `web/.env.local` com:
 
 ```
-BLOB_READ_WRITE_TOKEN=...
+BLOB_STORE_ID=...
 GROQ_API_KEY=...
 OPENAI_API_KEY=...
 DATABASE_URL=postgresql://...
 APP_PASSWORD=escolha-uma-senha
 AUTH_SECRET=uma-string-aleatoria-de-32-bytes
 ```
+
+🟡 O `VERCEL_OIDC_TOKEN` necessário para o Blob privado não é copiado à mão: rode `vercel link` e `vercel env pull /tmp/dev.env --environment development`, depois adicione `VERCEL_OIDC_TOKEN` ao `web/.env.local`. Ele expira e precisa ser renovado.
 
 ## 3. Banco de dados
 
@@ -49,7 +51,7 @@ AUTH_SECRET=uma-string-aleatoria-de-32-bytes
 ## 6. Deploy
 
 1. 🟡 Crie o projeto no Vercel apontando para o repositório, com Root Directory `web`.
-2. 🟡 Adicione o Blob store e o Neon pelo marketplace do Vercel.
+2. 🟡 Conecte o Blob store privado com credenciais OIDC e o Neon pelo marketplace do Vercel.
 3. 🟡 Configure as mesmas variáveis de ambiente em Production.
 4. 🟡 Faça o deploy e repita o teste manual na URL pública.
 
@@ -61,3 +63,4 @@ AUTH_SECRET=uma-string-aleatoria-de-32-bytes
 | 🟡 422 "Áudio acima de 5 minutos" | 🟡 Duração real acima de 300 s | 🟡 Exportar um áudio menor |
 | 🟡 Resumo mínimo com aviso | 🟡 LLM retornou JSON inválido duas vezes | 🟡 Tentar novamente ou revisar a transcrição |
 | 🟡 Busca sem resultado | 🟡 Migração não rodou | 🟡 Executar `001_init.sql` |
+| 🟡 502 no upload | 🟡 Blob/OIDC sem `BLOB_STORE_ID` ou token expirado | 🟡 Reconectar o Blob store e renovar o OIDC |

@@ -37,19 +37,12 @@
 
 **Efeitos:** 🟡 apaga o cookie de sessão.
 
-## 3. POST /api/transcribe
+## 3. POST /api/upload
 
-**Request**
+**Request:** `multipart/form-data`
 
-```json
-{
-  "blobUrl": "https://...",
-  "filename": "audio.ogg",
-  "mimeType": "audio/ogg",
-  "sizeBytes": 123456,
-  "clientDurationSeconds": 180
-}
-```
+- 🟡 `file`: arquivo `.ogg`, `.opus`, `.mp3` ou `.m4a`
+- 🟡 `clientDurationSeconds` (opcional): duração lida no navegador
 
 **Response 200**
 
@@ -75,13 +68,12 @@
 |--------|----------|
 | 🟡 400 | Payload inválido |
 | 🟡 401 | Sem sessão válida |
-| 🟡 413 | Arquivo acima de 10 MB |
+| 🟡 413 | Arquivo acima de 4 MB |
 | 🟡 415 | Formato não suportado |
 | 🟡 422 | Duração acima de 300 s ou áudio ilegível |
-| 🟡 502 | Falha nos dois provedores de transcrição |
-| 🟡 504 | Timeout de provedor |
+| 🟡 502 | Falha no storage, na transcrição ou no resumo |
 
-**Idempotência:** 🟡 a mesma `blobUrl` em processamento retorna 409.
+**Storage:** 🟡 o arquivo é gravado em Blob privado no servidor via OIDC e apagado ao final.
 
 **Timeout:** 🟡 a rota usa o limite da função (300 s no Hobby).
 
@@ -156,9 +148,8 @@
 
 **Erros:** 🟡 400 para consulta acima de 200 caracteres; 🟡 401 sem sessão.
 
-## 8. Vercel Blob (client upload)
+## 8. Vercel Blob (privado, OIDC)
 
-- 🟡 `upload()` do `@vercel/blob/client` com `access: "public"` e `handleUploadUrl: "/api/blob-upload"`.
-- 🟡 A rota de token exige sessão válida.
-- 🟡 Após a transcrição, `del(blobUrl)` remove o arquivo.
-- 🟡 Em qualquer caminho de erro após o upload, o Blob é removido.
+- 🟡 O upload acontece no servidor com `put(..., { access: "private" })` via OIDC (`BLOB_STORE_ID` + `VERCEL_OIDC_TOKEN`).
+- 🟡 Não há token estático de leitura/escrita no cliente nem na aplicação.
+- 🟡 Após a transcrição, `del(blobUrl)` remove o arquivo em qualquer caminho, inclusive de erro.
